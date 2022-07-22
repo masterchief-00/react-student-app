@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import swal from "sweetalert";
 
 const EditStudent = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [course, setCourse] = useState("");
+  const [errorList,setErrorList]=useState([]);
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +25,15 @@ const EditStudent = () => {
         setEmail(res.data.student.email);
         setCourse(res.data.student.course);
         setPhone(res.data.student.phone);
+      } else if (res.data.status === 404) {
+        swal({
+          title: "Not Found!",
+          text: res.data.message,
+          icon: "warning",
+          button: "Ok",
+        });
+
+        navigate("/");
       }
     };
 
@@ -30,16 +42,40 @@ const EditStudent = () => {
 
   const updateStudent = async (e) => {
     e.preventDefault();
-    console.log(id);
+
+    document.getElementById("update-btn").disabled = true;
+    document.getElementById("update-btn").innerHTML = "Updating...";
+
     const res = await axios.put(
       `http://localhost:8000/api/update-student/${id}`,
       { name, email, course, phone }
     );
     if (res.data.status === 200) {
-      setName("");
-      setEmail("");
-      setCourse("");
-      setPhone("");
+      swal({
+        title: "Done!",
+        text: res.data.message,
+        icon: "success",
+        button: "Ok",
+      });
+
+      document.getElementById("update-btn").disabled = false;
+      document.getElementById("update-btn").innerHTML = "Update";
+
+      navigate("/");
+    } else if (res.data.status === 404) {
+      swal({
+        title: "Not Found!",
+        text: res.data.message,
+        icon: "warning",
+        button: "Ok",
+      });
+
+      navigate("/");
+    }
+    else{
+      setErrorList(res.data.validate_error);
+      document.getElementById("update-btn").disabled = false;
+      document.getElementById("update-btn").innerHTML = "Update";
     }
   };
 
@@ -77,6 +113,7 @@ const EditStudent = () => {
                     value={name}
                     className="form-control"
                   />
+                  <span className="text-danger">{errorList.name}</span>
                 </div>
                 <div className="form-group mb-3">
                   <label htmlFor="">Course:</label>
@@ -87,6 +124,7 @@ const EditStudent = () => {
                     value={course}
                     className="form-control"
                   />
+                  <span className="text-danger">{errorList.course}</span>
                 </div>
                 <div className="form-group mb-3">
                   <label htmlFor="">Email:</label>
@@ -97,6 +135,7 @@ const EditStudent = () => {
                     value={email}
                     className="form-control"
                   />
+                  <span className="text-danger">{errorList.email}</span>
                 </div>
                 <div className="form-group mb-3">
                   <label htmlFor="">Phone:</label>
@@ -107,9 +146,14 @@ const EditStudent = () => {
                     value={phone}
                     className="form-control"
                   />
+                  <span className="text-danger">{errorList.phone}</span>
                 </div>
                 <div className="form-group mb-3">
-                  <button className="btn btn-primary " type="submit">
+                  <button
+                    className="btn btn-primary"
+                    id="update-btn"
+                    type="submit"
+                  >
                     Update
                   </button>
                 </div>

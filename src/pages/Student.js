@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import swal from "sweetalert";
 
 class Student extends Component {
   state = {
@@ -10,13 +11,32 @@ class Student extends Component {
 
   async componentDidMount() {
     const res = await axios.get("http://localhost:8000/api/students");
-    if (res.status === 200) {
+    if (res.data.status === 200) {
       this.setState({
         students: res.data.students,
         loading: false,
       });
     }
   }
+
+  deleteStudent = async (e, id) => {
+    const clickedBtn = e.currentTarget;
+    clickedBtn.disabled = true;
+    clickedBtn.innerText = "Deleting";
+    const res = await axios.delete(
+      `http://localhost:8000/api/delete-student/${id}`
+    );
+
+    if (res.data.status === 200) {
+      swal({
+        title: "Done!",
+        text: res.data.message,
+        icon: "success",
+        button: "Ok",
+      });
+      clickedBtn.closest("tr").remove();
+    }
+  };
   render() {
     var student_HTML_TABLE = "";
 
@@ -46,12 +66,12 @@ class Student extends Component {
               </Link>
             </td>
             <td>
-              <Link
-                to={`delete-student/${item.id}`}
+              <button
+                onClick={(e) => this.deleteStudent(e, item.id)}
                 className="btn btn-danger btn-sm"
               >
                 Delete
-              </Link>
+              </button>
             </td>
           </tr>
         );
