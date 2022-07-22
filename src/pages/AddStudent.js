@@ -23,7 +23,7 @@ class AddStudent extends Component {
     e.preventDefault();
 
     const res = await axios.post(
-      "http://localhost:8000/api/add-student",
+      "https://studentmanager-api.herokuapp.com/api/add-student",
       this.state
     );
     if (res.data.status === 200) {

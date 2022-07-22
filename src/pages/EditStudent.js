@@ -16,7 +16,7 @@ const EditStudent = () => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/edit-student/${id}`,
+        `https://studentmanager-api.herokuapp.com/api/edit-student/${id}`,
         { name, email, course, phone }
       );
 

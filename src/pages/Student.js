@@ -24,7 +24,7 @@ class Student extends Component {
     clickedBtn.disabled = true;
     clickedBtn.innerText = "Deleting";
     const res = await axios.delete(
-      `http://localhost:8000/api/delete-student/${id}`
+      `https://studentmanager-api.herokuapp.com/api/delete-student/${id}`
     );
 
     if (res.data.status === 200) {
