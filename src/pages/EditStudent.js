@@ -47,7 +47,7 @@ const EditStudent = () => {
     document.getElementById("update-btn").innerHTML = "Updating...";
 
     const res = await axios.put(
-      `http://localhost:8000/api/update-student/${id}`,
+      `https://studentmanager-api.herokuapp.com/api/update-student/${id}`,
       { name, email, course, phone }
     );
     if (res.data.status === 200) {
