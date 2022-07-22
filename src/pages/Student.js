@@ -10,7 +10,7 @@ class Student extends Component {
   };
 
   async componentDidMount() {
-    const res = await axios.get("http://localhost:8000/api/students");
+    const res = await axios.get("https://studentmanager-api.herokuapp.com/api/students");
     if (res.data.status === 200) {
       this.setState({
         students: res.data.students,
